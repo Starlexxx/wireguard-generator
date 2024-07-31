@@ -11,7 +11,7 @@ generate_user_config() {
     local user_dir="${USER_CONFIG_DIR}/${username}"
     local user_private_key=$(wg genkey)
     local user_public_key=$(echo "${user_private_key}" | wg pubkey)
-    local user_ip="10.0.0.$(shuf -i 2-254 -n 1)"
+    local user_ip="10.10.10.$(( $(latest_ip)))"
 
     mkdir -p "${user_dir}"
 
@@ -20,12 +20,13 @@ generate_user_config() {
 [Interface]
 PrivateKey = ${user_private_key}
 Address = ${user_ip}/24
-DNS = 1.1.1.1
+DNS = 10.10.10.1
 
 [Peer]
 PublicKey = $(wg show ${WG_INTERFACE} public-key)
 Endpoint = $(curl -s ifconfig.me):51820
 AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 25
 EOF
 
     # Add user to the server configuration
@@ -43,6 +44,21 @@ EOF
 
     echo "Configuration for ${username} has been generated and added to the server."
     echo "User configuration file: ${user_dir}/${username}.conf"
+}
+
+function latest_ip() {
+    local latest_ip=$(grep -oP '10\.10\.10\.\K\d+' ${WG_CONFIG} | sort -n | tail -1)
+    # return error if latest ip is 255
+    if [[ "${latest_ip}" -eq 255 ]]; then
+      echo "The IP range is full."
+      exit 1
+    fi
+
+    if [[ -z "${latest_ip}" ]]; then
+        echo "2"
+    else
+        echo "${latest_ip} + 1"
+    fi
 }
 
 # Function to generate QR code for a user's WireGuard configuration

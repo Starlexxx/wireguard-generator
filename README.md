@@ -6,7 +6,7 @@ This script is used to generate WireGuard configurations for users and create QR
 
 ```sh
 # Download the script from GitHub:  
-curl -o wg-gen https://github.com/Starlexxx/wireguard-generator/wg-gen.sh
+curl -o wg-gen https://raw.githubusercontent.com/Starlexxx/wireguard-generator/main/wg-gen.sh
 
 # Make the script executable:  
 chmod +x wg-gen
