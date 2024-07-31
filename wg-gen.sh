@@ -77,12 +77,36 @@ generate_qr_code() {
 
 # Function to display help
 display_help() {
-    echo "Usage: $0 {add|qr} -n <username>"
+    echo "Usage: $0 {server|add|qr} -n <username>"
     echo
     echo "Commands:"
+    echo "  server               Generate a new WireGuard server configuration."
     echo "  add -n <username>    Generate a new WireGuard configuration for the specified user."
     echo "  qr -n <username>     Generate a QR code for the specified user's WireGuard configuration."
     echo "  help                 Display this help message."
+}
+
+# Function to generate WireGuard server configuration
+generate_server_config() {
+    local server_private_key=$(wg genkey)
+    local server_public_key=$(echo "${server_private_key}" | wg pubkey)
+    local server_ip="10.10.10.1"
+
+    # Generate server configuration file
+    cat <<EOF > "${WG_CONFIG}"
+[Interface]
+PrivateKey = ${server_private_key}
+Address = ${server_ip}/24
+ListenPort = 51820
+SaveConfig = true
+EOF
+
+    # Restart WireGuard to apply changes
+    wg-quick down ${WG_INTERFACE}
+    wg-quick up ${WG_INTERFACE}
+
+    echo "Server configuration has been generated and applied."
+    echo "Server configuration file: ${WG_CONFIG}"
 }
 
 # Main script logic
@@ -90,6 +114,8 @@ if [[ "$1" == "add" && "$2" == "-n" && -n "$3" ]]; then
     generate_user_config "$3"
 elif [[ "$1" == "qr" && "$2" == "-n" && -n "$3" ]]; then
     generate_qr_code "$3"
+elif [[ "$1" == "server" ]]; then
+    generate_server_config
 elif [[ "$1" == "help" ]]; then
     display_help
 else
