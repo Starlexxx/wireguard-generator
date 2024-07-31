@@ -6,13 +6,13 @@ This script is used to generate WireGuard configurations for users and create QR
 
 ```sh
 # Download the script from GitHub:  
-curl -o wg https://github.com/Starlexxx/wireguard-generator/wg-gen.sh
+curl -o wg-gen https://github.com/Starlexxx/wireguard-generator/wg-gen.sh
 
 # Make the script executable:  
-chmod +x wg
+chmod +x wg-gen
 
 # Move the script to a directory in your PATH, for example /usr/local/bin:  
-sudo mv wg /usr/local/bin/
+sudo mv wg-gen /usr/local/bin/
 
 # Add the following line to your .bashrc or .bash_profile to ensure the script is in your PATH:  
 export PATH=$PATH:/usr/local/bin
@@ -30,9 +30,9 @@ wg-gen {add|qr} -n <username>
 ## Commands
 
 ```sh
-wg-gen add -n <username>: Generate a new WireGuard configuration for the specified user.
-wg-gen qr -n <username>: Generate a QR code for the specified user's WireGuard configuration.
-wg-gen help: Display the help message.
+wg-gen add -n <username> # Generate a new WireGuard configuration for the specified user.
+wg-gen qr -n <username> # Generate a QR code for the specified user's WireGuard configuration.
+wg-gen help # Display the help message.
 ```
 
 ## Examples
@@ -46,7 +46,7 @@ wg-gen add -n Starlexxx
 ### Generate a QR code for the WireGuard configuration of a user named Andrew:  
 
 ```sh
-./wg qr -n Andrew
+wg-gen qr -n Starlexxx
 ```
 
 ## Dependencies
