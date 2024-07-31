@@ -24,14 +24,14 @@ source ~/.bashrc
 ## Usage
 
 ```sh
-wg-gen {server|add|qr} -n <username>
+wg-gen {server|add|qr} -n <username> [-qr]
 ```
 
 ## Commands
 
 ```sh
 wg-gen server # Install WireGuard and configure the server.
-wg-gen add -n <username> # Generate a new WireGuard configuration for the specified user.
+wg-gen add -n <username> [-qr] # Generate a new WireGuard configuration for the specified user.
 wg-gen qr -n <username> # Generate a QR code for the specified user's WireGuard configuration.
 wg-gen help # Display the help message.
 ```
@@ -54,6 +54,12 @@ wg-gen add -n Starlexxx
 
 ```sh
 wg-gen qr -n Starlexxx
+```
+
+### Generate a WireGuard configuration for a user and a QR code:
+
+```sh
+wg-gen add -n Starlexxx -qr
 ```
 
 ## Dependencies

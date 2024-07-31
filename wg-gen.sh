@@ -8,6 +8,7 @@ USER_CONFIG_DIR="${WG_DIR}/users"
 # Function to generate WireGuard configuration for a new user
 generate_user_config() {
     local username=$1
+    local generate_qr=$2
     local user_dir="${USER_CONFIG_DIR}/${username}"
     local user_private_key=$(wg genkey)
     local user_public_key=$(echo "${user_private_key}" | wg pubkey)
@@ -44,6 +45,11 @@ EOF
 
     echo "Configuration for ${username} has been generated and added to the server."
     echo "User configuration file: ${user_dir}/${username}.conf"
+
+    # Generate QR code if requested
+    if [[ "${generate_qr}" == "true" ]]; then
+        qrencode -t ansiutf8 < "${user_dir}/${username}.conf"
+    fi
 }
 
 function latest_ip() {
@@ -77,13 +83,13 @@ generate_qr_code() {
 
 # Function to display help
 display_help() {
-    echo "Usage: $0 {server|add|qr} -n <username>"
+    echo "Usage: $0 {server|add|qr} -n <username> [-qr]"
     echo
     echo "Commands:"
-    echo "  server               Generate a new WireGuard server configuration."
-    echo "  add -n <username>    Generate a new WireGuard configuration for the specified user."
-    echo "  qr -n <username>     Generate a QR code for the specified user's WireGuard configuration."
-    echo "  help                 Display this help message."
+    echo "  server                     Generate a new WireGuard server configuration."
+    echo "  add -n <username> [-qr]    Generate a new WireGuard configuration for the specified user."
+    echo "  qr -n <username>           Generate a QR code for the specified user's WireGuard configuration."
+    echo "  help                       Display this help message."
 }
 
 # Function to generate WireGuard server configuration
@@ -111,7 +117,11 @@ EOF
 
 # Main script logic
 if [[ "$1" == "add" && "$2" == "-n" && -n "$3" ]]; then
-    generate_user_config "$3"
+    if [[ "$4" == "-qr" ]]; then
+        generate_user_config "$3" "true"
+    else
+        generate_user_config "$3" "false"
+    fi
 elif [[ "$1" == "qr" && "$2" == "-n" && -n "$3" ]]; then
     generate_qr_code "$3"
 elif [[ "$1" == "server" ]]; then
