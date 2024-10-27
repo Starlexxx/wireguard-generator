@@ -16,6 +16,9 @@ generate_user_config() {
 
     mkdir -p "${user_dir}"
 
+    # stop WireGuard interface
+    wg-quick down ${WG_INTERFACE}
+
     # Generate user configuration file
     cat <<EOF > "${user_dir}/${username}.conf"
 [Interface]
@@ -39,8 +42,7 @@ PublicKey = ${user_public_key}
 AllowedIPs = ${user_ip}/32
 EOF
 
-    # Restart WireGuard to apply changes
-    wg-quick down ${WG_INTERFACE}
+    # Start WireGuard interface
     wg-quick up ${WG_INTERFACE}
 
     echo "Configuration for ${username} has been generated and added to the server."
@@ -104,7 +106,6 @@ generate_server_config() {
 PrivateKey = ${server_private_key}
 Address = ${server_ip}/24
 ListenPort = 51820
-SaveConfig = true
 EOF
 
     # Restart WireGuard to apply changes
