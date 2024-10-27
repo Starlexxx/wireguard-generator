@@ -16,8 +16,6 @@ generate_user_config() {
 
     mkdir -p "${user_dir}"
 
-    # stop WireGuard interface
-    wg-quick down ${WG_INTERFACE}
 
     # Generate user configuration file
     cat <<EOF > "${user_dir}/${username}.conf"
@@ -42,7 +40,8 @@ PublicKey = ${user_public_key}
 AllowedIPs = ${user_ip}/32
 EOF
 
-    # Start WireGuard interface
+    # Restart WireGuard interface
+    wg-quick down ${WG_INTERFACE}
     wg-quick up ${WG_INTERFACE}
 
     echo "Configuration for ${username} has been generated and added to the server."
@@ -99,6 +98,11 @@ generate_server_config() {
     local server_private_key=$(wg genkey)
     local server_public_key=$(echo "${server_private_key}" | wg pubkey)
     local server_ip="10.10.10.1"
+
+    # Ensure the WireGuard directory exists
+    if [[ ! -d "${WG_DIR}" ]]; then
+        mkdir -p "${WG_DIR}"
+    fi
 
     # Generate server configuration file
     cat <<EOF > "${WG_CONFIG}"
